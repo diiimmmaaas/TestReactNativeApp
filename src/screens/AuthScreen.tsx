@@ -1,7 +1,9 @@
 import React, {useEffect} from 'react';
-import {Text, View, StyleSheet, TextInput} from 'react-native';
+import {Text, View, StyleSheet, TextInput, Alert} from 'react-native';
 import {useForm} from 'react-hook-form';
 import {CustomButton} from '../components/CustomButton';
+import {useNavigation} from '@react-navigation/native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export const AuthScreen = () => {
   const {
@@ -11,7 +13,16 @@ export const AuthScreen = () => {
     setValue,
     formState: {errors},
   } = useForm();
-  const onSubmit = (data: any) => console.log(data);
+
+  const navigation = useNavigation<any>();
+  const onSubmit = async (data: any) => {
+    try {
+      await AsyncStorage.setItem('login', data.name);
+      navigation.goBack();
+    } catch (e) {
+      Alert.alert('Error storage');
+    }
+  };
 
   const onChangeText = (keyName: string, text: string) => {
     setValue(keyName, text);
